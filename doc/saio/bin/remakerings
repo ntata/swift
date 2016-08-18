@@ -1,5 +1,6 @@
 #!/bin/bash
 
+<<<<<<< HEAD
 if [ -z "${SWIFT_ROOT}" ]; then
     echo "Setting SWIFT_ROOT"
     export SWIFT_ROOT='/etc/swift'
@@ -16,6 +17,11 @@ if [ ! -w ${SWIFT_ROOT} ]; then
 fi
 
 cd ${SWIFT_ROOT}
+=======
+set -e
+
+cd /etc/swift
+>>>>>>> Apply bash error handling consistently in all bash scripts
 
 rm -f *.builder *.ring.gz backups/*.builder backups/*.ring.gz
 
