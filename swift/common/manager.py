@@ -29,7 +29,11 @@ from swift.common.utils import search_tree, remove_file, write_file, \
 from swift.common.exceptions import InvalidPidFileException
 
 SWIFT_DIR = SWIFT_ROOT
-RUN_DIR = '/var/run/swift'
+
+RUN_DIR = os.environ.get('SWIFT_RUN_DIR')
+if RUN_DIR is None:
+    RUN_DIR = '/var/run/swift'
+
 PROC_DIR = '/proc'
 
 # auth-server has been removed from ALL_SERVERS, start it explicitly
