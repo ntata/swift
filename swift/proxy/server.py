@@ -32,7 +32,7 @@ from swift.common.ring import Ring
 from swift.common.utils import cache_from_env, get_logger, \
     get_remote_client, split_path, config_true_value, generate_trans_id, \
     affinity_key_function, affinity_locality_predicate, list_from_csv, \
-    register_swift_info
+    register_swift_info, SWIFT_ROOT
 from swift.common.constraints import check_utf8, valid_api_version
 from swift.proxy.controllers import AccountController, ContainerController, \
     ObjectControllerRouter, InfoController
@@ -90,7 +90,7 @@ class Application(object):
 
         self._error_limiting = {}
 
-        swift_dir = conf.get('swift_dir', '/etc/swift')
+        swift_dir = conf.get('swift_dir', SWIFT_ROOT)
         self.swift_dir = swift_dir
         self.node_timeout = float(conf.get('node_timeout', 10))
         self.recoverable_node_timeout = float(

@@ -24,10 +24,11 @@ import subprocess
 import re
 from swift import gettext_ as _
 
-from swift.common.utils import search_tree, remove_file, write_file
+from swift.common.utils import search_tree, remove_file, write_file, \
+    SWIFT_ROOT
 from swift.common.exceptions import InvalidPidFileException
 
-SWIFT_DIR = '/etc/swift'
+SWIFT_DIR = SWIFT_ROOT
 RUN_DIR = '/var/run/swift'
 PROC_DIR = '/proc'
 

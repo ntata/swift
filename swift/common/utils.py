@@ -160,7 +160,7 @@ def IOPRIO_PRIO_VALUE(class_, data):
 HASH_PATH_SUFFIX = ''
 HASH_PATH_PREFIX = ''
 
-SWIFT_CONF_FILE = '/etc/swift/swift.conf'
+SWIFT_CONF_FILE = ''
 
 # These constants are Linux-specific, and Python doesn't seem to know
 # about them. We ask anyway just in case that ever gets fixed.
@@ -202,6 +202,11 @@ def validate_hash_conf():
         if not HASH_PATH_SUFFIX and not HASH_PATH_PREFIX:
             raise InvalidHashPathConfigError()
 
+# make use of SWIFT_ROOT if set, otherwise use default
+SWIFT_ROOT = os.environ.get('SWIFT_ROOT')
+if SWIFT_ROOT is None:
+    SWIFT_ROOT = '/etc/swift'
+SWIFT_CONF_FILE = os.path.join(SWIFT_ROOT, 'swift.conf')
 
 try:
     validate_hash_conf()
