@@ -92,7 +92,12 @@ from x_profile.html_viewer import HTMLViewer
 from x_profile.profile_model import ProfileLog
 
 
-DEFAULT_PROFILE_PREFIX = '/tmp/log/swift/profile/default.profile'
+SWIFT_XPROFILE_DIR = os.environ.get('SWIFT_XPROFILE_DIR')
+if SWIFT_XPROFILE_DIR is None:
+    SWIFT_XPROFILE_DIR = '/tmp/log/swift'
+
+
+DEFAULT_PROFILE_PREFIX = "%s/%s" % (SWIFT_XPROFILE_DIR, "default.profile")
 
 # unwind the iterator; it may call start_response, do lots of work, etc
 PROFILE_EXEC_EAGER = """
