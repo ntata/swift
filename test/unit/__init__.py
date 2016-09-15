@@ -57,6 +57,11 @@ from nose import SkipTest
 
 EMPTY_ETAG = md5().hexdigest()
 
+#custom swift_dir
+TEST_SWIFT_DIR = os.environ.get('SWIFT_ROOT')
+if TEST_SWIFT_DIR is None:
+    TEST_SWIFT_DIR = '/etc/swift'
+
 # try not to import this module from swift
 if not os.path.basename(sys.argv[0]).startswith('swift'):
     # never patch HASH_PATH_SUFFIX AGAIN!

@@ -32,7 +32,7 @@ from swift.common import utils
 from swift.common.ring import builder
 from swift.common.ring import utils as ring_utils
 from swift.common.storage_policy import StoragePolicy, POLICIES
-from test.unit import patch_policies
+from test.unit import patch_policies, TEST_SWIFT_DIR
 
 
 class TestHelpers(unittest.TestCase):
@@ -269,10 +269,10 @@ class TestRecon(unittest.TestCase):
             scout_instance = mock.MagicMock()
             url = 'http://%s:%s/recon/ringmd5' % hosts[0]
             response = {
-                '/etc/swift/account.ring.gz': empty_file_hash,
-                '/etc/swift/container.ring.gz': empty_file_hash,
-                '/etc/swift/object.ring.gz': empty_file_hash,
-                '/etc/swift/object-1.ring.gz': empty_file_hash,
+                os.path.join(TEST_SWIFT_DIR, "account.ring.gz"): empty_file_hash,
+                os.path.join(TEST_SWIFT_DIR, "container.ring.gz"): empty_file_hash,
+                os.path.join(TEST_SWIFT_DIR, "object.ring.gz"): empty_file_hash,
+                os.path.join(TEST_SWIFT_DIR, "object-1.ring.gz"): empty_file_hash,
             }
             status = 200
             scout_instance.scout.return_value = (url, response, status, 0, 0)
@@ -662,9 +662,9 @@ class TestReconCommands(unittest.TestCase):
 
         responses = {
             ('10.1.1.1', 10000, 'swiftconfmd5'):
-            json.dumps({'/etc/swift/swift.conf': cksum}),
+            json.dumps({os.path.join(TEST_SWIFT_DIR, "swift.conf"): cksum}),
             ('10.2.2.2', 10000, 'swiftconfmd5'):
-            json.dumps({'/etc/swift/swift.conf': cksum})}
+            json.dumps({os.path.join(TEST_SWIFT_DIR, "swift.conf"): cksum})}
 
         printed = []
         with self.mock_responses(responses):
@@ -681,9 +681,9 @@ class TestReconCommands(unittest.TestCase):
 
         responses = {
             ('10.1.1.1', 10000, 'swiftconfmd5'):
-            json.dumps({'/etc/swift/swift.conf': cksum}),
+            json.dumps({os.path.join(TEST_SWIFT_DIR, "swift.conf"): cksum}),
             ('10.2.2.2', 10000, 'swiftconfmd5'):
-            json.dumps({'/etc/swift/swift.conf': 'bogus'})}
+            json.dumps({os.path.join(TEST_SWIFT_DIR, "swift.conf"): 'bogus'})}
 
         printed = []
         with self.mock_responses(responses):

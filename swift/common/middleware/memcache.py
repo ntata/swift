@@ -19,7 +19,7 @@ from six.moves.configparser import ConfigParser, NoSectionError, NoOptionError
 
 from swift.common.memcached import (MemcacheRing, CONN_TIMEOUT, POOL_TIMEOUT,
                                     IO_TIMEOUT, TRY_COUNT)
-
+from swift.common.utils import SWIFT_ROOT
 
 class MemcacheMiddleware(object):
     """
@@ -42,7 +42,7 @@ class MemcacheMiddleware(object):
         if (not self.memcache_servers
                 or serialization_format is None
                 or max_conns <= 0):
-            path = os.path.join(conf.get('swift_dir', '/etc/swift'),
+            path = os.path.join(conf.get('swift_dir', SWIFT_ROOT),
                                 'memcache.conf')
             memcache_conf = ConfigParser()
             if memcache_conf.read(path):

@@ -25,7 +25,7 @@ from swift.common.memcached import MemcacheRing
 from swift.common.swob import Request
 from swift.common.wsgi import loadapp
 
-from test.unit import with_tempdir, patch_policies
+from test.unit import with_tempdir, patch_policies, TEST_SWIFT_DIR
 
 
 class FakeApp(object):
@@ -128,7 +128,8 @@ class TestCacheMiddleware(unittest.TestCase):
                 except Exception as err:
                     self.assertEqual(
                         str(err),
-                        "read called with '/etc/swift/memcache.conf'")
+                        "read called with '%s'" % (
+                            os.path.join(TEST_SWIFT_DIR, "memcache.conf")))
                     count += 1
         finally:
             memcache.ConfigParser = orig_parser

@@ -27,7 +27,7 @@ from swift.common import ring, utils
 from swift.common.swob import Request
 from swift.common.middleware import recon
 from swift.common.storage_policy import StoragePolicy
-from test.unit import patch_policies
+from test.unit import patch_policies, TEST_SWIFT_DIR
 
 
 def fake_check_mount(a, b):
@@ -181,7 +181,7 @@ class FakeRecon(object):
         return {'ringmd5test': "1"}
 
     def fake_swiftconfmd5(self):
-        return {'/etc/swift/swift.conf': "abcdef"}
+        return {os.path.join(TEST_SWIFT_DIR, "swift.conf"): "abcdef"}
 
     def fake_quarantined(self):
         return {'quarantinedtest': "1"}
@@ -1331,7 +1331,7 @@ class TestReconMiddleware(unittest.TestCase):
         self.assertEqual(resp, get_ringmd5_resp)
 
     def test_recon_get_swiftconfmd5(self):
-        get_swiftconfmd5_resp = ['{"/etc/swift/swift.conf": "abcdef"}']
+        get_swiftconfmd5_resp = ['{"%s/%s": "abcdef"}' % (TEST_SWIFT_DIR, "swift.conf")]
         req = Request.blank('/recon/swiftconfmd5',
                             environ={'REQUEST_METHOD': 'GET'})
         resp = self.app(req.environ, start_response)
@@ -1398,12 +1398,12 @@ class TestReconMiddleware(unittest.TestCase):
     def test_get_swift_conf_md5(self):
         """Test get_swift_conf_md5 success"""
         resp = self.app.get_swift_conf_md5()
-        self.assertEqual('abcdef', resp['/etc/swift/swift.conf'])
+        self.assertEqual('abcdef', resp[os.path.join(TEST_SWIFT_DIR, "swift.conf")])
 
     def test_get_swift_conf_md5_fail(self):
         """Test get_swift_conf_md5 failure by failing file open"""
         resp = self.real_app_get_swift_conf_md5(fail_io_open)
-        self.assertIsNone(resp['/etc/swift/swift.conf'])
+        self.assertIsNone(resp[os.path.join(TEST_SWIFT_DIR, "swift.conf")])
 
 if __name__ == '__main__':
     unittest.main()
