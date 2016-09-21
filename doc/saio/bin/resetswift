@@ -1,6 +1,7 @@
 #!/bin/bash
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 SWIFT_GROUP=swift
 
 swift-init all stop
@@ -9,6 +10,16 @@ set -e
 
 swift-init all kill
 >>>>>>> Apply bash error handling consistently in all bash scripts
+=======
+set -e
+
+swift-init all kill
+=======
+SWIFT_GROUP=swift
+
+swift-init all stop
+>>>>>>> Changed group in resetswift command
+>>>>>>> Changed group in resetswift command
 # Remove the following line if you did not set up rsyslog for individual logging:
 sudo find /var/log/swift -type f -exec rm -f {} \;
 if cut -d' ' -f2 /proc/mounts | grep -q /mnt/sdb1 ; then
