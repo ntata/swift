@@ -4,46 +4,47 @@ Swift Upgrade
 Manual upgrade steps : Storage node
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On a multi-node Swift cluster (1 Proxy , 3 ACO)
+Tested on a multi-node(VM) Swift cluster (2 Proxy , 3 ACO)
 Steps – Upgrade a single storage (ACO) node first
+
 1.	Stop all background Swift jobs with
 
-..code::
+.. code::
   $ swift-init rest stop
 
 2.	Shutdown all Swift storage processes with
 
-..code::
+.. code::
   $ swift-init {account|container|object} shutdown --graceful
 
 3.	Upgrade all system packages and Swift code
 
 -update source code
 
-..code::
+.. code::
   $ git tag –l # lists all the tags for the given repo
   $ git checkout <tag_to_update_to>
 
 -upgrading the packages
 
-..code::
+.. code::
   $ sudo pip install –r requirements.txt --upgrade
   $ sudo pip install –r test-requirements.txt –upgrade
   $ sudo python setup.py install
 
 4.	If needed, reboot server
 
-..code::
+.. code::
   $ sudo reboot
 
 5.	Start the storage service with
 
-..code::
+.. code::
   $ swift-init {account|container|object} start
 
 6.	Start background Swift jobs with
 
-..code::
+.. code::
   $ swift-init rest start
 
 Upgrading all of the other storage nodes
@@ -54,7 +55,7 @@ Manual upgrade steps : Proxy node
 
 1.	Shutdown the Swift- Proxy server with
 
-..code::
+.. code::
   $ swift-init proxy shutdown [ --graceful ]
 
 2. Create ''disable_path''- file system path in proxy config, to cause
@@ -64,13 +65,13 @@ Manual upgrade steps : Proxy node
 
 -update source code
 
-..code::
+.. code::
   $ git tag –l # lists all the tags for the given repo
   $ git checkout <tag_to_update_to>
 
 -upgrading the packages
 
-..code::
+.. code::
   $ sudo pip install –r requirements.txt --upgrade
   $ sudo pip install –r test-requirements.txt –upgrade
   $ sudo python setup.py install
@@ -79,12 +80,12 @@ Manual upgrade steps : Proxy node
 
 5.	If needed, reboot server
 
-..code::
+.. code::
   $ sudo reboot
 
 6.	Start the proxy service with
 
-..code::
+.. code::
   $ swift-init proxy start
 
 7. Remove the ''disable_path'' file
