@@ -155,10 +155,8 @@ The key to high availability (zero downtime) during Swift upgrades is:
 
 References
 ~~~~~~~~~~
-[1] https://www.swiftstack.com/blog/2013/12/20/upgrade-openstack-swift-no
--downtime/
+[1] https://www.swiftstack.com/blog/2013/12/20/upgrade-openstack-swift-no-downtime/
 
-[2] https://www.blueboxcloud.com/resources/user-resources/upgrading-openstack-a
--best-practices-guide
+[2] https://www.blueboxcloud.com/resources/user-resources/upgrading-openstack-a-best-practices-guide
 
 [3] https://github.com/openstack/swift/blob/master/etc/proxy-server.conf-sample#L408
