@@ -1,11 +1,20 @@
-=============
-Swift Upgrade
-=============
-Manual upgrade steps : Storage node
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+=====================
+Swift Rolling Upgrade
+=====================
 
-Tested on a multi-node(VM) Swift cluster (2 Proxy , 3 ACO)
-Steps – Upgrade a single storage (ACO) node first
+Overview of upgrade process
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1.	Upgrade a single storage (ACO) node ('canary' node)
+2.	Observe upgraded storage node for problems or anomalies
+3.	Upgrade all other storage nodes (1 at a time)
+4.	Upgrade a single proxy node ('canary' node)
+5.	Observe upgraded proxy node for problems or anomalies
+6.	Upgrade all other proxy nodes (1 at a time)
+
+Upgrading a Storage Node
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+NOTE: tested on a multi-node (VMs) Swift cluster (2 Proxy, 3 ACO)
 
 1.	Stop all background Swift jobs with
 
@@ -19,16 +28,16 @@ Steps – Upgrade a single storage (ACO) node first
 
    $ swift-init {account|container|object} shutdown --graceful
 
-3.	Upgrade all system packages and Swift code
+3.	Upgrade to newer version of Swift
 
--update source code
+(a) Upgrading from source code
 
 .. code::
 
-   $ git tag –l # lists all the tags for the given repo
+   $ git tag –l  # lists all the tags for the given repo
    $ git checkout <tag_to_update_to>
 
--upgrading the packages
+(b) Upgrading packages
 
 .. code::
 
@@ -36,13 +45,13 @@ Steps – Upgrade a single storage (ACO) node first
    $ sudo pip install –r test-requirements.txt –upgrade
    $ sudo python setup.py install
 
-4.	If needed, reboot server
+4.	If needed, reboot server for kernel upgrades(if any)
 
 .. code::
 
    $ sudo reboot
 
-5.	Start the storage service with
+5.	Start all the storage service with
 
 .. code::
 
@@ -54,31 +63,29 @@ Steps – Upgrade a single storage (ACO) node first
 
    $ swift-init rest start
 
-Upgrading all of the other storage nodes
--	Repeat the above steps for each node
 
-Manual upgrade steps : Proxy node
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Upgrading a Proxy Node
+~~~~~~~~~~~~~~~~~~~~~~
 
-1.	Shutdown the Swift- Proxy server with
+1.	Shutdown the Swift proxy server with
 
 .. code::
 
    $ swift-init proxy shutdown [ --graceful ]
 
-2. Create ''disable_path''- file system path in proxy config, to cause
-/heatlthcheck endpoint to return 503 service unavailable
+2. Create ''disable_path'' file system path in proxy config, to cause
+/heatlthcheck endpoint to return 503 service unavailable (for more info [3])
 
-3.	Upgrade all system packages and Swift code
+3.	Upgrade to newer version of Swift
 
--update source code
+(a) Upgrading from source code
 
 .. code::
 
    $ git tag –l # lists all the tags for the given repo
    $ git checkout <tag_to_update_to>
 
--upgrading the packages
+(b) Upgrading packages
 
 .. code::
 
@@ -88,7 +95,7 @@ Manual upgrade steps : Proxy node
 
 4. Update the proxy configs with changes, if any
 
-5.	If needed, reboot server
+5.	If needed, reboot server for kernel upgrades(if any)
 
 .. code::
 
@@ -100,45 +107,56 @@ Manual upgrade steps : Proxy node
 
    $ swift-init proxy start
 
-7. Remove the ''disable_path'' file
+7. Remove the ''disable_path'' file (re-enable health check)
 
 
 Terminology
 ~~~~~~~~~~~
 
-Control Plane:
-~~~~~~~~~~~~~~
-A software layer that manages data stored across storage devices. Control
+Control Plane
+~~~~~~~~~~~~~
+The control plane manages data stored across storage devices. The control
 plane handles requests for user account logins, as well as CRUD (Create,
-Read, Update and Delete) requests for resources such as Swift - objects. In
-Swift, proxy service can be considered as Control plane as it serves
-the above functionalities and provides access to the underlying stored data
-and storage services. If the Control plane were to crash, access to the data
+Read, Update and Delete) requests for resources such as Swift objects. In
+Swift, the proxy service can be considered as the control plane as it serves
+the above functionality and provides access to the underlying stored data
+and storage services. If the control plane were to crash, access to the data
 is lost but not the actual data.
 
-Data Plane:
-~~~~~~~~~~~
-A software layer that manages data, storage devices, read/write operations to
-the data stored on devices. Data plane manages updating the databases, file
-access- I/O or file system tasks. In Swift, strorage services - Account,
-Container and Object services can be considered as Data plane. The Data plane
-notifies the Control plane of possible 'running out of disk space' or drive
-failure etc. scenarios. If a Data plane were to crash, data in that node is
+Data Plane
+~~~~~~~~~~
+The data plane manages data, storage devices, and the read/write operations to
+the data stored on devices. The data plane manages updating the databases, file
+access I/O or filesystem tasks. In Swift, storage services (account,
+container, object) can be considered as the data plane. The data plane
+notifies the control plane of possible 'running out of disk space' or drive
+failure scenarios. If a data plane node were to crash, data in that node may be
 lost.
 
-Zero downtime Rolling upgrade
+Zero Downtime Rolling Upgrade
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Swift service by desgin provides zero downtime rolling upgrade as in say
-during strorage node upgrade CRUD requests to access the data through the
-proxy-server continue without any delay or change as we are upgrading one
-node at a time and the data can be accessed with the remaining nodes and the
-new node will be updated with the data during the next update cycle. Similary
-during the proxy-node upgrade, load balancer will direct the CRUD requests
-to other proxy nodes and the user will not notice any difference in their
-requests being handled.
+Swift services, by design, provide high availability and redundancy. This
+feature allows for zero-downtime rolling upgrades. For example, during
+upgrade of a single storage node, CRUD requests (made to proxy server) will
+continue without any interruption of service. This zero-downtime upgrade is
+possible because the other storage nodes will still be online and accessible
+by the proxy server. The newly upgraded storage node will gain data consistency
+with the remaining storage nodes during the next replication cycle that
+occurs after being brought online.
 
-Reference
-~~~~~~~~~
+Similarly, there would be no downtime during upgrade of a single proxy
+node as the load balancer will direct requests to other proxy nodes
+within the cluster. The end user will not experience any service
+interruptions during this upgrade process.
 
-https://www.swiftstack.com/blog/2013/12/20/upgrade-openstack-swift-no-downtime/
-https://www.blueboxcloud.com/resources/user-resources/upgrading-openstack-a-best-practices-guide
+The key to high availability (zero downtime) during Swift upgrades is:
+(1) having multiple storage nodes and multiple proxy nodes, and
+(2) performing upgrades one node at a time.
+
+References
+~~~~~~~~~~
+[1] https://www.swiftstack.com/blog/2013/12/20/upgrade-openstack-swift-no
+-downtime/
+[2] https://www.blueboxcloud.com/resources/user-resources/upgrading-openstack-a
+-best-practices-guide
+[3] https://github.com/openstack/swift/blob/master/etc/proxy-server.conf-sample#L408
