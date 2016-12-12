@@ -30,19 +30,19 @@ NOTE: tested on a multi-node (VMs) Swift cluster (2 Proxy, 3 ACO)
 
 3.	Upgrade to newer version of Swift
 
-(a) Upgrading from source code
+(a) Upgrade from source code
 
 .. code::
 
    $ git tag –l  # lists all the tags for the given repo
    $ git checkout <tag_to_update_to>
 
-(b) Upgrading packages
+(b) Upgrade packages
 
 .. code::
 
    $ sudo pip install –r requirements.txt --upgrade
-   $ sudo pip install –r test-requirements.txt –upgrade
+   $ sudo pip install –r test-requirements.txt -–upgrade
    $ sudo python setup.py install
 
 4.	If needed, reboot server for kernel upgrades(if any)
@@ -51,7 +51,7 @@ NOTE: tested on a multi-node (VMs) Swift cluster (2 Proxy, 3 ACO)
 
    $ sudo reboot
 
-5.	Start all the storage service with
+5.	Start all the storage services with
 
 .. code::
 
@@ -78,14 +78,14 @@ Upgrading a Proxy Node
 
 3.	Upgrade to newer version of Swift
 
-(a) Upgrading from source code
+(a) Upgrade from source code
 
 .. code::
 
    $ git tag –l # lists all the tags for the given repo
    $ git checkout <tag_to_update_to>
 
-(b) Upgrading packages
+(b) Upgrade packages
 
 .. code::
 
@@ -93,7 +93,7 @@ Upgrading a Proxy Node
    $ sudo pip install –r test-requirements.txt –upgrade
    $ sudo python setup.py install
 
-4. Update the proxy configs with changes, if any
+4. Update proxy configuration file (/etc/swift/proxy.conf), if required
 
 5.	If needed, reboot server for kernel upgrades(if any)
 
@@ -107,7 +107,7 @@ Upgrading a Proxy Node
 
    $ swift-init proxy start
 
-7. Remove the ''disable_path'' file (re-enable health check)
+7. Remove ''disable_path'' file (re-enable health check)
 
 
 Terminology
@@ -151,7 +151,7 @@ interruptions during this upgrade process.
 
 The key to high availability (zero downtime) during Swift upgrades is:
 (1) having multiple storage nodes and multiple proxy nodes, and
-(2) performing upgrades one node at a time.
+(2) performing upgrades one node at a time starting from storage nodes to proxy nodes.
 
 References
 ~~~~~~~~~~
